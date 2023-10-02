@@ -1,28 +1,35 @@
 <?php
-    // print_r($_POST);
+// Database credentials
+$servername = "localhost";
+$username = "root";
+$password = "";
+$database = "student_data";
 
-    $name = $_POST['name'];
-    $class = $_POST['class'];
-    $rollNo = $_POST['rollNo'];
-    $age = $_POST['age'];
-    $marks = $_POST['marks'];
-    $city = $_POST['city'];
+// Create a connection to the database
+$conn = new mysqli($servername, $username, $password, $database);
 
-    //CONNECTION WITH DATABASE
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $name = $_POST["name"];
+    $class = $_POST["class"];
+    $rollNo = $_POST["rollNo"];
+    $age = $_POST["age"];
+    $marks = $_POST["marks"];
+    $city = $_POST["city"];
 
-    $servername = 'localhost';
-    $username = 'root';
-    $password = '';
-    $database = 'student';
-
-    $conn = mysqli_connect($servername, $username, $password, $database);
-
-    $sql = "INSERT INTO `student`(`name`, `class`, `rollNo`, `age`, `marks`, `city`) VALUES (?, ?, ?, ?, ?, ?)";
-    $stmt = mysqli_prepare($conn, $sql);
-    mysqli_stmt_bind_param($stmt, "ssiiis", $name, $class, $rollNo, $age, $marks, $city);
-
-    echo $sql;
-
-
+    // Create a prepared statement
+    $stmt = $conn->prepare("INSERT INTO student (name, class, rollNo, age, marks, city) VALUES (?, ?, ?, ?, ?, ?)");
     
+    // Bind parameters
+    $stmt->bind_param("ssssss", $name, $class, $rollNo, $age, $marks, $city);
+
+    // Execute the statement
+    if ($stmt->execute()) {
+        echo "Record added successfully.";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    // Close the statement
+    $stmt->close();
+}
 ?>
